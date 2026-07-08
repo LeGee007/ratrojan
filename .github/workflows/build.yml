@@ -1,4 +1,4 @@
-name: Build bot.exe
+name: Build RaTrojan.exe
 
 on:
   push:
@@ -20,9 +20,6 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Kutubxonalar o'rnatish
-        run: pip install pyinstaller -r requirements.txt
-
       - name: Version olish
         id: ver
         shell: python
@@ -33,21 +30,22 @@ jobs:
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
               f.write(f"version={ver}\n")
 
-      - name: bot.exe build
+      - name: Kutubxonalar o'rnatish
+        run: pip install pyinstaller pywin32 psutil Pillow GPUtil opencv-python pyautogui numpy python-dotenv
+
+      - name: Logo ICO ga o'girish
         run: |
           if (Test-Path "logo.png") {
-            pip install pillow
             python -c "from PIL import Image; img = Image.open('logo.png'); img.save('logo.ico', format='ICO', sizes=[(256,256),(128,128),(64,64),(32,32),(16,16)])"
+          }
+
+      - name: PyInstaller build
+        run: |
+          if (Test-Path "logo.ico") {
             pyinstaller --onefile --noconsole --name RaTrojan --icon logo.ico bot.py
           } else {
             pyinstaller --onefile --noconsole --name RaTrojan bot.py
           }
-
-      - name: Eski latest release o'chirish
-        run: |
-          gh release delete v${{ steps.ver.outputs.version }} --yes 2>$null || true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Release yaratish va upload
         uses: softprops/action-gh-release@v2
@@ -55,3 +53,6 @@ jobs:
           tag_name: v${{ steps.ver.outputs.version }}
           name: v${{ steps.ver.outputs.version }}
           files: dist/RaTrojan.exe
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
