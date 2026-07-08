@@ -1,0 +1,57 @@
+name: Build bot.exe
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python o'rnatish
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Kutubxonalar o'rnatish
+        run: pip install pyinstaller -r requirements.txt
+
+      - name: Version olish
+        id: ver
+        shell: python
+        run: |
+          import re, os
+          content = open("bot.py").read()
+          ver = re.search(r'VERSION\s*=\s*"([\d.]+)"', content).group(1)
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"version={ver}\n")
+
+      - name: bot.exe build
+        run: |
+          if (Test-Path "logo.png") {
+            pip install pillow
+            python -c "from PIL import Image; img = Image.open('logo.png'); img.save('logo.ico', format='ICO', sizes=[(256,256),(128,128),(64,64),(32,32),(16,16)])"
+            pyinstaller --onefile --noconsole --name RaTrojan --icon logo.ico bot.py
+          } else {
+            pyinstaller --onefile --noconsole --name RaTrojan bot.py
+          }
+
+      - name: Eski latest release o'chirish
+        run: |
+          gh release delete v${{ steps.ver.outputs.version }} --yes 2>$null || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Release yaratish va upload
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.ver.outputs.version }}
+          name: v${{ steps.ver.outputs.version }}
+          files: dist/RaTrojan.exe

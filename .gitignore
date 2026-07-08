@@ -1,0 +1,7 @@
+server/
+bot.spec
+__pycache__/
+*.pyc
+dist/
+build/
+.env

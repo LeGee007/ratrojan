@@ -1,0 +1,10 @@
+python-telegram-bot==21.5
+psutil
+pywin32
+Pillow
+GPUtil
+wmi
+opencv-python
+pyautogui
+numpy
+python-dotenv
