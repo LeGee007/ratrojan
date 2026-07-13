@@ -31,7 +31,7 @@ jobs:
               f.write(f"version={ver}\n")
 
       - name: Kutubxonalar o'rnatish
-        run: pip install pyinstaller pywin32 psutil Pillow GPUtil opencv-python pyautogui numpy python-dotenv
+        run: pip install pyinstaller pywin32 psutil Pillow GPUtil opencv-python pyautogui numpy python-dotenv "python-telegram-bot==21.5"
 
       - name: Logo ICO ga o'girish
         run: |

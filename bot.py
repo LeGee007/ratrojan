@@ -199,6 +199,7 @@ def main_keyboard():
         [InlineKeyboardButton("🔴 O'chirish", callback_data="shutdown"),
          InlineKeyboardButton("🔁 Restart", callback_data="restart"),
          InlineKeyboardButton("😴 Sleep", callback_data="sleep")],
+        [InlineKeyboardButton("🗑 Appni o'chirish", callback_data="uninstall")],
     ])
 
 def back_kb():
